@@ -6,7 +6,7 @@ Kotlin Multiplatform port of [`serde_test`](https://github.com/serde-rs/test), t
 
 ```kotlin
 dependencies {
-    testImplementation("io.github.kotlinmania:serde-test-kotlin:0.1.0")
+    testImplementation("io.github.kotlinmania:serde-test-kotlin:0.1.1")
 }
 ```
 

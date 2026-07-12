@@ -14,11 +14,11 @@ import io.github.kotlinmania.serdecore.ser.SerializeTupleVariant
 import io.github.kotlinmania.serdecore.ser.Serializer as SerdeSerializer
 
 /** A serializer that ensures that a value serializes to a given list of tokens. */
-internal class Serializer(
+class TokenSerializer private constructor(
     tokens: List<Token>,
 ) : SerdeSerializer<Unit> {
     companion object {
-        fun new(tokens: List<Token>): Serializer = Serializer(tokens)
+        fun new(tokens: List<Token>): TokenSerializer = TokenSerializer(tokens)
     }
 
     private val tokens = tokens.toMutableList()
@@ -185,7 +185,7 @@ internal class Serializer(
 }
 
 private class SequenceState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
     private val end: Token,
 ) : SerializeSeq<Unit> {
     override fun <T : Serialize> serializeElement(value: T): SerdeResult<Unit> = value.serialize(serializer)
@@ -194,7 +194,7 @@ private class SequenceState(
 }
 
 private class TupleState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
 ) : SerializeTuple<Unit> {
     override fun <T : Serialize> serializeElement(value: T): SerdeResult<Unit> = value.serialize(serializer)
 
@@ -202,7 +202,7 @@ private class TupleState(
 }
 
 private class TupleStructState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
 ) : SerializeTupleStruct<Unit> {
     override fun <T : Serialize> serializeField(value: T): SerdeResult<Unit> = value.serialize(serializer)
 
@@ -210,7 +210,7 @@ private class TupleStructState(
 }
 
 private class TupleVariantState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
     private val end: Token,
 ) : SerializeTupleVariant<Unit> {
     override fun <T : Serialize> serializeField(value: T): SerdeResult<Unit> = value.serialize(serializer)
@@ -219,7 +219,7 @@ private class TupleVariantState(
 }
 
 private class MapState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
 ) : SerializeMap<Unit> {
     override fun <T : Serialize> serializeKey(key: T): SerdeResult<Unit> = key.serialize(serializer)
 
@@ -229,7 +229,7 @@ private class MapState(
 }
 
 private class StructState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
 ) : SerializeStruct<Unit> {
     override fun <T : Serialize> serializeField(
         key: String,
@@ -240,7 +240,7 @@ private class StructState(
 }
 
 private class StructVariantState(
-    private val serializer: Serializer,
+    private val serializer: TokenSerializer,
     private val end: Token,
 ) : SerializeStructVariant<Unit> {
     override fun <T : Serialize> serializeField(
