@@ -25,7 +25,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinxBenchmark" }
-serde-kotlin = { module = "io.github.kotlinmania:serde-kotlin", version = "0.1.4" }
+serde-kotlin = { module = "io.github.kotlinmania:serde-kotlin", version = "0.1.5" }
 
 [bundles]
 serde-test-commonMain = [
