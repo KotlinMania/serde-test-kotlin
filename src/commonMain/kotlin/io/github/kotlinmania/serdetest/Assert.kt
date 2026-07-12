@@ -20,7 +20,7 @@ fun assertSerTokens(
     value: Serialize,
     tokens: List<Token>,
 ) {
-    val serializer = Serializer(tokens)
+    val serializer = TokenSerializer.new(tokens)
     when (val result = value.serialize(serializer)) {
         is SerdeResult.Success -> Unit
         is SerdeResult.Failure -> error("value failed to serialize: ${result.error}")
@@ -34,7 +34,7 @@ fun assertSerTokensError(
     tokens: List<Token>,
     error: String,
 ) {
-    val serializer = Serializer(tokens)
+    val serializer = TokenSerializer.new(tokens)
     when (val result = value.serialize(serializer)) {
         is SerdeResult.Success -> error("value serialized successfully")
         is SerdeResult.Failure -> {
