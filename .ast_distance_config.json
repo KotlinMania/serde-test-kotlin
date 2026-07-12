@@ -1,0 +1,22 @@
+{
+  "type": "port",
+  "name": "serde-test-kotlin",
+  "source": {
+    "path": "tmp/serde_test/src",
+    "lang": "rust"
+  },
+  "target": {
+    "path": "src/commonMain/kotlin/io/github/kotlinmania/serdetest",
+    "lang": "kotlin"
+  },
+  "checks": {
+    "deep": true,
+    "missing": true,
+    "todos": true,
+    "lint": true
+  },
+  "reexport_modules": [
+    "mod.rs",
+    "lib.rs"
+  ]
+}
