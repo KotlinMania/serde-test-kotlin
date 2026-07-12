@@ -626,10 +626,12 @@ val wasmYarnVersion = providers.gradleProperty("wasm.yarn.version").getOrElse(ya
 // store; a Dependabot bump of package.json/yarn.lock is honored rather than
 // overridden. (These two values previously lived in gradle.properties, which
 // Dependabot cannot see, so a bump there would silently revert the build.)
-@Suppress("UNCHECKED_CAST")
 val webpackVersion: String =
-    (groovy.json.JsonSlurper().parse(rootProject.file("kotlin-js-store/package.json")) as Map<String, Any>)
-        .let { it["dependencies"] as Map<String, Any> }["webpack"] as String
+    (groovy.json.JsonSlurper().parse(rootProject.file("kotlin-js-store/package.json")) as? Map<*, *>)
+        ?.get("dependencies")
+        ?.let { it as? Map<*, *> }
+        ?.get("webpack") as? String
+        ?: error("kotlin-js-store/package.json must declare a string dependencies.webpack version")
 
 rootProject.extensions.configure<NodeJsEnvSpec>("kotlinNodeJsSpec") { version.set(nodeVersion) }
 rootProject.extensions.configure<WasmNodeJsEnvSpec>("kotlinWasmNodeJsSpec") { version.set(wasmNodeVersion) }
@@ -658,8 +660,8 @@ val patchedKarmaWebpackPackage =
         .asFile.absolutePath
         .replace("\\", "/")
 
-// TODO: NodeJsRootExtension.versions.* is deprecated and will be removed when the spec-based
-//       NodeJsEnvSpec API gains equivalent properties. Track KGP release notes before removing.
+// The legacy versions API remains required because the spec-based environment API does not expose
+// equivalent package-version properties.
 rootProject.extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
     versions.webpack.version = webpackVersion
     versions.webpackCli.version = providers.gradleProperty("node.webpackCli.version").getOrElse("7.0.2")
