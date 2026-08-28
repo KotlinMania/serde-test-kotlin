@@ -20,10 +20,26 @@ import io.github.kotlinmania.serdecore.ser.SerializeTupleStruct
 import io.github.kotlinmania.serdecore.ser.SerializeTupleVariant
 import io.github.kotlinmania.serdecore.ser.Serializer
 
+/**
+ * Trait to determine whether a value is represented in human-readable or
+ * compact form.
+ */
+interface Configure<T : Serialize> {
+    /** Marks this value as using human-readable format. */
+    fun readable(): Readable<T>
+
+    /** Marks this value as using compact format. */
+    fun compact(): Compact<T>
+}
+
 // generic by design: callers choose the serializable value type.
 data class Readable<T : Serialize>(
     val value: T,
-) : Serialize {
+) : Serialize, Configure<T> {
+    override fun readable(): Readable<T> = this
+
+    override fun compact(): Compact<T> = Compact(value)
+
     override fun <Ok> serialize(serializer: Serializer<Ok>): SerdeResult<Ok> =
         value.serialize(ConfiguredSerializer(serializer, true))
 }
@@ -31,7 +47,11 @@ data class Readable<T : Serialize>(
 // generic by design: callers choose the serializable value type.
 data class Compact<T : Serialize>(
     val value: T,
-) : Serialize {
+) : Serialize, Configure<T> {
+    override fun readable(): Readable<T> = Readable(value)
+
+    override fun compact(): Compact<T> = this
+
     override fun <Ok> serialize(serializer: Serializer<Ok>): SerdeResult<Ok> =
         value.serialize(ConfiguredSerializer(serializer, false))
 }

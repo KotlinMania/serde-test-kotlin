@@ -5,7 +5,9 @@ import io.github.kotlinmania.serde.SerdeResult
 import io.github.kotlinmania.serdecore.de.Deserialize
 import io.github.kotlinmania.serdecore.ser.Serialize
 
-/** Runs both [assertSerTokens] and [assertDeTokens]. */
+/**
+ * Runs both [assertSerTokens] and [assertDeTokens].
+ */
 fun <T> assertTokens(
     value: T,
     deserialize: Deserialize<T>,
@@ -15,7 +17,9 @@ fun <T> assertTokens(
     assertDeTokens(value, deserialize, tokens)
 }
 
-/** Asserts that [value] serializes to [tokens]. */
+/**
+ * Asserts that [value] serializes to the given [tokens].
+ */
 fun assertSerTokens(
     value: Serialize,
     tokens: List<Token>,
@@ -28,7 +32,9 @@ fun assertSerTokens(
     assertNoRemainingTokens(serializer.remaining())
 }
 
-/** Asserts that [value] serializes to [tokens] and yields [error]. */
+/**
+ * Asserts that [value] serializes to the given [tokens], and then yields [error].
+ */
 fun assertSerTokensError(
     value: Serialize,
     tokens: List<Token>,
@@ -46,7 +52,9 @@ fun assertSerTokensError(
     assertNoRemainingTokens(serializer.remaining())
 }
 
-/** Asserts that [tokens] deserialize into [value]. */
+/**
+ * Asserts that the given [tokens] deserialize into [value].
+ */
 fun <T> assertDeTokens(
     value: T,
     deserialize: Deserialize<T>,
@@ -79,7 +87,9 @@ fun <T> assertDeTokens(
     assertNoRemainingTokens(inPlaceDeserializer.remaining())
 }
 
-/** Asserts that [tokens] yield [error] when deserializing. */
+/**
+ * Asserts that the given [tokens] yield [error] when deserializing.
+ */
 fun <T> assertDeTokensError(
     deserialize: Deserialize<T>,
     tokens: List<Token>,

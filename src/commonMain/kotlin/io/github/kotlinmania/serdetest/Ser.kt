@@ -13,6 +13,9 @@ import io.github.kotlinmania.serdecore.ser.SerializeTupleStruct
 import io.github.kotlinmania.serdecore.ser.SerializeTupleVariant
 import io.github.kotlinmania.serdecore.ser.Serializer as SerdeSerializer
 
+typealias Serializer = TokenSerializer
+
+
 /** A serializer that ensures that a value serializes to a given list of tokens. */
 class TokenSerializer private constructor(
     tokens: List<Token>,
