@@ -1,8 +1,11 @@
-import XCTest
+import Testing
 import SerdeTest
 
-final class SerdeTestExportTests: XCTestCase {
+@Suite("SerdeTest Swift Export Tests")
+struct SerdeTestExportTests {
+    @Test("Swift module loads and exports cleanly")
     func testSwiftModuleLoads() throws {
-        XCTAssertTrue(true, "SerdeTest Swift module imported cleanly")
+        #expect(Bool(true), "SerdeTest swift module imported cleanly")
     }
 }
+
