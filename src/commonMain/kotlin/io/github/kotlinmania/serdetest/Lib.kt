@@ -15,3 +15,7 @@ package io.github.kotlinmania.serdetest
  * test both directions. There are also functions to test expected failure
  * conditions.
  */
+public object SerdeTestInfo {
+    /** Upstream SerdeTest crate version this port is transliterated from. */
+    public const val CRATE_VERSION: String = "1.0.176"
+}
