@@ -38,10 +38,17 @@ internal class Deserializer(
     private fun assertNextToken(expected: Token): SerdeResult<Unit> {
         val token = nextTokenOpt()
         return when {
-            token == expected -> SerdeResult.success(Unit)
-            token != null ->
+            token == expected -> {
+                SerdeResult.success(Unit)
+            }
+
+            token != null -> {
                 failure("expected Token::$token but deserialization wants Token::$expected")
-            else -> failure("end of tokens but deserialization wants Token::$expected")
+            }
+
+            else -> {
+                failure("end of tokens but deserialization wants Token::$expected")
+            }
         }
     }
 
@@ -66,43 +73,136 @@ internal class Deserializer(
     override fun <V> deserializeAny(visitor: Visitor<V>): SerdeResult<V> =
         nextToken().flatMap { token ->
             when (token) {
-                is Token.Bool -> visitor.visitBool(token.value)
-                is Token.I8 -> visitor.visitI8(token.value)
-                is Token.I16 -> visitor.visitI16(token.value)
-                is Token.I32 -> visitor.visitI32(token.value)
-                is Token.I64 -> visitor.visitI64(token.value)
-                is Token.U8 -> visitor.visitU8(token.value)
-                is Token.U16 -> visitor.visitU16(token.value)
-                is Token.U32 -> visitor.visitU32(token.value)
-                is Token.U64 -> visitor.visitU64(token.value)
-                is Token.F32 -> visitor.visitF32(token.value)
-                is Token.F64 -> visitor.visitF64(token.value)
-                is Token.CharValue -> visitor.visitChar(token.value)
-                is Token.Str -> visitor.visitStr(token.value)
-                is Token.BorrowedStr -> visitor.visitBorrowedStr(token.value)
-                is Token.StringValue -> visitor.visitString(token.value)
-                is Token.Bytes -> visitor.visitBytes(token.value)
-                is Token.BorrowedBytes -> visitor.visitBorrowedBytes(token.value)
-                is Token.ByteBuf -> visitor.visitByteBuf(token.value)
-                Token.None -> visitor.visitNone()
-                Token.Some -> visitor.visitSome(this)
+                is Token.Bool -> {
+                    visitor.visitBool(token.value)
+                }
+
+                is Token.I8 -> {
+                    visitor.visitI8(token.value)
+                }
+
+                is Token.I16 -> {
+                    visitor.visitI16(token.value)
+                }
+
+                is Token.I32 -> {
+                    visitor.visitI32(token.value)
+                }
+
+                is Token.I64 -> {
+                    visitor.visitI64(token.value)
+                }
+
+                is Token.U8 -> {
+                    visitor.visitU8(token.value)
+                }
+
+                is Token.U16 -> {
+                    visitor.visitU16(token.value)
+                }
+
+                is Token.U32 -> {
+                    visitor.visitU32(token.value)
+                }
+
+                is Token.U64 -> {
+                    visitor.visitU64(token.value)
+                }
+
+                is Token.F32 -> {
+                    visitor.visitF32(token.value)
+                }
+
+                is Token.F64 -> {
+                    visitor.visitF64(token.value)
+                }
+
+                is Token.CharValue -> {
+                    visitor.visitChar(token.value)
+                }
+
+                is Token.Str -> {
+                    visitor.visitStr(token.value)
+                }
+
+                is Token.BorrowedStr -> {
+                    visitor.visitBorrowedStr(token.value)
+                }
+
+                is Token.StringValue -> {
+                    visitor.visitString(token.value)
+                }
+
+                is Token.Bytes -> {
+                    visitor.visitBytes(token.value)
+                }
+
+                is Token.BorrowedBytes -> {
+                    visitor.visitBorrowedBytes(token.value)
+                }
+
+                is Token.ByteBuf -> {
+                    visitor.visitByteBuf(token.value)
+                }
+
+                Token.None -> {
+                    visitor.visitNone()
+                }
+
+                Token.Some -> {
+                    visitor.visitSome(this)
+                }
+
                 Token.UnitValue,
                 is Token.UnitStruct,
-                -> visitor.visitUnit()
-                is Token.NewtypeStruct -> visitor.visitNewtypeStruct(this)
-                is Token.Seq -> visitSeq(token.len, Token.SeqEnd, visitor)
-                is Token.Tuple -> visitSeq(token.len, Token.TupleEnd, visitor)
-                is Token.TupleStruct -> visitSeq(token.len, Token.TupleStructEnd, visitor)
-                is Token.Map -> visitMap(token.len, Token.MapEnd, visitor)
-                is Token.Struct -> visitMap(token.len, Token.StructEnd, visitor)
-                is Token.Enum -> deserializeAnyEnum(visitor)
-                is Token.UnitVariant -> visitor.visitStr(token.variant)
-                is Token.NewtypeVariant ->
+                -> {
+                    visitor.visitUnit()
+                }
+
+                is Token.NewtypeStruct -> {
+                    visitor.visitNewtypeStruct(this)
+                }
+
+                is Token.Seq -> {
+                    visitSeq(token.len, Token.SeqEnd, visitor)
+                }
+
+                is Token.Tuple -> {
+                    visitSeq(token.len, Token.TupleEnd, visitor)
+                }
+
+                is Token.TupleStruct -> {
+                    visitSeq(token.len, Token.TupleStructEnd, visitor)
+                }
+
+                is Token.Map -> {
+                    visitMap(token.len, Token.MapEnd, visitor)
+                }
+
+                is Token.Struct -> {
+                    visitMap(token.len, Token.StructEnd, visitor)
+                }
+
+                is Token.Enum -> {
+                    deserializeAnyEnum(visitor)
+                }
+
+                is Token.UnitVariant -> {
+                    visitor.visitStr(token.variant)
+                }
+
+                is Token.NewtypeVariant -> {
                     visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Any))
-                is Token.TupleVariant ->
+                }
+
+                is Token.TupleVariant -> {
                     visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Seq))
-                is Token.StructVariant ->
+                }
+
+                is Token.StructVariant -> {
                     visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Map))
+                }
+
                 Token.SeqEnd,
                 Token.TupleEnd,
                 Token.TupleStructEnd,
@@ -110,7 +210,9 @@ internal class Deserializer(
                 Token.StructEnd,
                 Token.TupleVariantEnd,
                 Token.StructVariantEnd,
-                -> unexpected(token)
+                -> {
+                    unexpected(token)
+                }
             }
         }
 
@@ -192,11 +294,15 @@ internal class Deserializer(
                     nextTokenOpt()
                     visitor.visitNone()
                 }
+
                 Token.Some -> {
                     nextTokenOpt()
                     visitor.visitSome(this)
                 }
-                else -> deserializeAny(visitor)
+
+                else -> {
+                    deserializeAny(visitor)
+                }
             }
         }
 
@@ -215,11 +321,26 @@ internal class Deserializer(
                         visitor.visitEnum(DeserializerEnumAccess(this))
                     }
                 }
-                is Token.UnitVariant -> visitNamedEnum(name, token.name, visitor)
-                is Token.NewtypeVariant -> visitNamedEnum(name, token.name, visitor)
-                is Token.TupleVariant -> visitNamedEnum(name, token.name, visitor)
-                is Token.StructVariant -> visitNamedEnum(name, token.name, visitor)
-                else -> deserializeAny(visitor)
+
+                is Token.UnitVariant -> {
+                    visitNamedEnum(name, token.name, visitor)
+                }
+
+                is Token.NewtypeVariant -> {
+                    visitNamedEnum(name, token.name, visitor)
+                }
+
+                is Token.TupleVariant -> {
+                    visitNamedEnum(name, token.name, visitor)
+                }
+
+                is Token.StructVariant -> {
+                    visitNamedEnum(name, token.name, visitor)
+                }
+
+                else -> {
+                    deserializeAny(visitor)
+                }
             }
         }
 
@@ -256,26 +377,32 @@ internal class Deserializer(
         len: Int,
         visitor: Visitor<V>,
     ): SerdeResult<V> =
-        when (val token = peekTokenOpt()) {
+        when (peekTokenOpt()) {
             Token.UnitValue,
             is Token.UnitStruct,
             -> {
                 nextTokenOpt()
                 visitor.visitUnit()
             }
+
             is Token.Seq -> {
                 nextTokenOpt()
                 visitSeq(len, Token.SeqEnd, visitor)
             }
+
             is Token.Tuple -> {
                 nextTokenOpt()
                 visitSeq(len, Token.TupleEnd, visitor)
             }
+
             is Token.TupleStruct -> {
                 nextTokenOpt()
                 visitSeq(len, Token.TupleStructEnd, visitor)
             }
-            else -> deserializeAny(visitor)
+
+            else -> {
+                deserializeAny(visitor)
+            }
         }
 
     override fun <V> deserializeTupleStruct(
@@ -288,20 +415,30 @@ internal class Deserializer(
                 nextTokenOpt()
                 visitor.visitUnit()
             }
-            is Token.UnitStruct -> assertNextToken(Token.UnitStruct(name)).flatMap { visitor.visitUnit() }
+
+            is Token.UnitStruct -> {
+                assertNextToken(Token.UnitStruct(name)).flatMap { visitor.visitUnit() }
+            }
+
             is Token.Seq -> {
                 nextTokenOpt()
                 visitSeq(len, Token.SeqEnd, visitor)
             }
+
             is Token.Tuple -> {
                 nextTokenOpt()
                 visitSeq(len, Token.TupleEnd, visitor)
             }
-            is Token.TupleStruct ->
+
+            is Token.TupleStruct -> {
                 assertNextToken(Token.TupleStruct(name, token.len)).flatMap {
                     visitSeq(len, Token.TupleStructEnd, visitor)
                 }
-            else -> deserializeAny(visitor)
+            }
+
+            else -> {
+                deserializeAny(visitor)
+            }
         }
 
     override fun <V> deserializeStruct(
@@ -310,15 +447,20 @@ internal class Deserializer(
         visitor: Visitor<V>,
     ): SerdeResult<V> =
         when (val token = peekTokenOpt()) {
-            is Token.Struct ->
+            is Token.Struct -> {
                 assertNextToken(Token.Struct(name, token.len)).flatMap {
                     visitMap(fields.size, Token.StructEnd, visitor)
                 }
+            }
+
             is Token.Map -> {
                 nextTokenOpt()
                 visitMap(fields.size, Token.MapEnd, visitor)
             }
-            else -> deserializeAny(visitor)
+
+            else -> {
+                deserializeAny(visitor)
+            }
         }
 
     override fun isHumanReadable(): Boolean =
@@ -382,7 +524,10 @@ internal class Deserializer(
                     deserializer.nextTokenOpt()
                     SerdeResult.success(Unit)
                 }
-                else -> deserializer.nextToken().flatMap(::unexpected)
+
+                else -> {
+                    deserializer.nextToken().flatMap(::unexpected)
+                }
             }
 
         override fun <T> newtypeVariantSeed(seed: DeserializeSeed<T>): SerdeResult<T> {
@@ -403,6 +548,7 @@ internal class Deserializer(
                         unexpected(token)
                     }
                 }
+
                 is Token.Seq -> {
                     deserializer.nextTokenOpt()
                     if (token.len == len) {
@@ -411,7 +557,10 @@ internal class Deserializer(
                         unexpected(token)
                     }
                 }
-                else -> deserializer.deserializeAny(visitor)
+
+                else -> {
+                    deserializer.deserializeAny(visitor)
+                }
             }
 
         override fun <V> structVariant(
@@ -427,6 +576,7 @@ internal class Deserializer(
                         unexpected(token)
                     }
                 }
+
                 is Token.Map -> {
                     deserializer.nextTokenOpt()
                     if (token.len == fields.size) {
@@ -435,7 +585,10 @@ internal class Deserializer(
                         unexpected(token)
                     }
                 }
-                else -> deserializer.deserializeAny(visitor)
+
+                else -> {
+                    deserializer.deserializeAny(visitor)
+                }
             }
     }
 
@@ -464,13 +617,17 @@ internal class Deserializer(
                         deserializer.assertNextToken(Token.TupleVariantEnd).map { value }
                     }
                 }
+
                 EnumFormat.Map -> {
                     val access = DeserializerMapAccess(deserializer, null, Token.StructVariantEnd)
                     seed.deserialize(MapAccessDeserializer.new(access)).flatMap { value ->
                         deserializer.assertNextToken(Token.StructVariantEnd).map { value }
                     }
                 }
-                EnumFormat.Any -> seed.deserialize(deserializer)
+
+                EnumFormat.Any -> {
+                    seed.deserialize(deserializer)
+                }
             }
     }
 }
