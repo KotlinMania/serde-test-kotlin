@@ -1,44 +1,72 @@
-build
-bin
-.idea/*
-*.iml
-.gradle
-.cache
-*.swp
-.DS_Store
-.project
+# Kotlin/Gradle build artifacts
+build/
+.gradle/
+.kotlin/
+*.class
+*.jar
+*.war
+*.ear
 
-.kotlin
-.android-sdk
+# Keep the Gradle wrapper jar checked in so CI can run `./gradlew`.
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+out/
+
+# Upstream Rust source — clone freshly when porting begins
+tmp/
+!tmp/.gitkeep
+
+# AST distance reports and binaries
+port_status_report.md
+high_priority_ports.md
+port_lint_proposed_changes.md
+ast_distance_*.txt
+.cache/
+*.lock
+kotlin-js-store/*
+!kotlin-js-store/package.json
+!kotlin-js-store/yarn.lock
+!kotlin-js-store/wasm/
+!kotlin-js-store/wasm/yarn.lock
+tools/ast_distance/ast_distance
+tools/ast_distance/build/
+tools/ast_distance
+tools/
+
+# JVM heap dumps
+*.hprof
+java_pid*.hprof
+
+# macOS Finder metadata
+.DS_Store
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Android SDK
+/.android-sdk/
 local.properties
 
-!.idea/vcs.xml
-!.idea/dictionaries
-!.idea/dictionaries/*
-!.idea/codeStyles
-!.idea/codeStyles/*
-
-.gradletasknamecache
-.settings
-.classpath
-logs
-/build-log.txt
-
-swift-test-harness/.build/
-swift-test-harness/.swiftpm/
-swift-test-harness/Package.resolved
+# Swift Package Manager / Xcode workspace state.
+#
+# `swift-test-harness/` is a real SPM package that exercises the Kotlin
+# Swift Export pipeline against the artifacts produced by
+# `embedSwiftExportForXcode`. Its `Package.swift`, `Tests/`, and
+# per-package `.gitignore` (which ignores its own `.build/`) are all
+# tracked. The patterns below cover the Swift/Xcode workspace state
+# that this harness — or any future Swift Package added under the
+# repo — would also produce.
+#
+# Note: the staging directory the Kotlin Swift Export pipeline writes
+# to (`build/swift-test/lib*.a` + `.swiftmodule/` bundles when run with
+# the Xcode-style env vars) is already covered by `build/` above.
 .swiftpm/
 DerivedData/
 *.xcuserstate
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
-/tmp/
-tools/ast_distance
-
-NEXT_ACTIONS.md
-port_status_report.md
-high_priority_ports.md
-port_lint_proposed_changes.md
-
-kotlin-js-store/node_modules
-kotlin-js-store/wasm/node_modules
+local.properties

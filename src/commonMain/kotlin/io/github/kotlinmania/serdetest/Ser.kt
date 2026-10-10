@@ -34,15 +34,21 @@ class TokenSerializer private constructor(
     internal fun expect(actual: Token): SerdeResult<Unit> {
         val expected = nextToken()
         return when {
-            expected == actual -> SerdeResult.success(Unit)
-            expected != null ->
+            expected == actual -> {
+                SerdeResult.success(Unit)
+            }
+
+            expected != null -> {
                 SerdeResult.failure(
                     SerdeError.custom("expected Token::$expected but serialized as $actual"),
                 )
-            else ->
+            }
+
+            else -> {
                 SerdeResult.failure(
                     SerdeError.custom("expected end of tokens, but $actual was serialized"),
                 )
+            }
         }
     }
 

@@ -42,7 +42,10 @@ fun assertSerTokensError(
 ) {
     val serializer = TokenSerializer.new(tokens)
     when (val result = value.serialize(serializer)) {
-        is SerdeResult.Success -> error("value serialized successfully")
+        is SerdeResult.Success -> {
+            error("value serialized successfully")
+        }
+
         is SerdeResult.Failure -> {
             if (result.error.message != error) {
                 error("expected error <$error>, actual <${result.error.message}>")
@@ -97,7 +100,10 @@ fun <T> assertDeTokensError(
 ) {
     val deserializer = Deserializer(tokens)
     when (val result = deserialize.deserialize(deserializer)) {
-        is SerdeResult.Success -> error("tokens deserialized successfully")
+        is SerdeResult.Success -> {
+            error("tokens deserialized successfully")
+        }
+
         is SerdeResult.Failure -> {
             if (result.error.message != error) {
                 error("expected error <$error>, actual <${result.error.message}>")
