@@ -16,6 +16,6 @@ package io.github.kotlinmania.serdetest
  * conditions.
  */
 public object SerdeTestInfo {
-    /** Upstream serde_test crate version this port is transliterated from. */
+    /** Upstream SerdeTest crate version this port is transliterated from. */
     public const val CRATE_VERSION: String = "1.0.176"
 }
