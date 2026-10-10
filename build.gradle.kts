@@ -424,7 +424,10 @@ kotlin {
         configureBenchmarkCompilation()
         addToXcf()
     }
-    // watchosArm64 (WatchOS 32 / arm64_32): retired by workspace policy (§5.5.1). WatchOS 32 is not supported.
+    watchosArm64 {
+        configureBenchmarkCompilation()
+        addToXcf()
+    }
     watchosDeviceArm64 {
         configureBenchmarkCompilation()
         addToXcf()
@@ -1100,6 +1103,7 @@ val nativeTargetNames =
         "mingwX64",
         "tvosArm64",
         "tvosSimulatorArm64",
+        "watchosArm64",
         "watchosDeviceArm64",
         "watchosSimulatorArm64",
     )
