@@ -35,7 +35,8 @@ interface Configure<T : Serialize> {
 // generic by design: callers choose the serializable value type.
 data class Readable<T : Serialize>(
     val value: T,
-) : Serialize, Configure<T> {
+) : Serialize,
+    Configure<T> {
     override fun readable(): Readable<T> = this
 
     override fun compact(): Compact<T> = Compact(value)
@@ -47,7 +48,8 @@ data class Readable<T : Serialize>(
 // generic by design: callers choose the serializable value type.
 data class Compact<T : Serialize>(
     val value: T,
-) : Serialize, Configure<T> {
+) : Serialize,
+    Configure<T> {
     override fun readable(): Readable<T> = Readable(value)
 
     override fun compact(): Compact<T> = this
