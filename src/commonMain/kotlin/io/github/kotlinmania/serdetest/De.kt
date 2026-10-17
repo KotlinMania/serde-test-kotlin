@@ -57,7 +57,7 @@ internal class Deserializer(
         end: Token,
         visitor: Visitor<V>,
     ): SerdeResult<V> =
-        visitor.visitSeq(DeserializerSeqAccess(this, len, end)).flatMap { value ->
+        visitor.visitSeq(DeserializerSeqVisitor(this, len, end)).flatMap { value ->
             assertNextToken(end).map { value }
         }
 
@@ -66,7 +66,7 @@ internal class Deserializer(
         end: Token,
         visitor: Visitor<V>,
     ): SerdeResult<V> =
-        visitor.visitMap(DeserializerMapAccess(this, len, end)).flatMap { value ->
+        visitor.visitMap(DeserializerMapVisitor(this, len, end)).flatMap { value ->
             assertNextToken(end).map { value }
         }
 
@@ -192,15 +192,15 @@ internal class Deserializer(
                 }
 
                 is Token.NewtypeVariant -> {
-                    visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Any))
+                    visitor.visitMap(EnumMapVisitor(this, Token.Str(token.variant), EnumFormat.Any))
                 }
 
                 is Token.TupleVariant -> {
-                    visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Seq))
+                    visitor.visitMap(EnumMapVisitor(this, Token.Str(token.variant), EnumFormat.Seq))
                 }
 
                 is Token.StructVariant -> {
-                    visitor.visitMap(EnumMapAccess(this, Token.Str(token.variant), EnumFormat.Map))
+                    visitor.visitMap(EnumMapVisitor(this, Token.Str(token.variant), EnumFormat.Map))
                 }
 
                 Token.SeqEnd,
@@ -281,7 +281,7 @@ internal class Deserializer(
                     else -> unexpected(variant)
                 }
             } else {
-                visitor.visitMap(EnumMapAccess(this, variant, EnumFormat.Any))
+                visitor.visitMap(EnumMapVisitor(this, variant, EnumFormat.Any))
             }
         }
 
@@ -318,7 +318,7 @@ internal class Deserializer(
                         unexpected(token)
                     } else {
                         nextTokenOpt()
-                        visitor.visitEnum(DeserializerEnumAccess(this))
+                        visitor.visitEnum(DeserializerEnumVisitor(this))
                     }
                 }
 
@@ -350,7 +350,7 @@ internal class Deserializer(
         visitor: Visitor<V>,
     ): SerdeResult<V> =
         if (expectedName == actualName) {
-            visitor.visitEnum(DeserializerEnumAccess(this))
+            visitor.visitEnum(DeserializerEnumVisitor(this))
         } else {
             unexpected(peekTokenOpt() ?: return endOfTokens())
         }
@@ -469,7 +469,7 @@ internal class Deserializer(
                 "must explicitly mark their test cases with Configure",
         )
 
-    private class DeserializerSeqAccess(
+    private class DeserializerSeqVisitor(
         private val deserializer: Deserializer,
         private var len: Int?,
         private val end: Token,
@@ -483,7 +483,7 @@ internal class Deserializer(
         override fun sizeHint(): Int? = len
     }
 
-    private class DeserializerMapAccess(
+    private class DeserializerMapVisitor(
         private val deserializer: Deserializer,
         private var len: Int?,
         private val end: Token,
@@ -499,7 +499,7 @@ internal class Deserializer(
         override fun sizeHint(): Int? = len
     }
 
-    private class DeserializerEnumAccess(
+    private class DeserializerEnumVisitor(
         private val deserializer: Deserializer,
     ) : EnumAccess,
         VariantAccess {
@@ -598,7 +598,7 @@ internal class Deserializer(
         Any,
     }
 
-    private class EnumMapAccess(
+    private class EnumMapVisitor(
         private val deserializer: Deserializer,
         private var variant: Token?,
         private val format: EnumFormat,
@@ -606,20 +606,23 @@ internal class Deserializer(
         override fun <K> nextKeySeed(seed: DeserializeSeed<K>): SerdeResult<K?> {
             val token = variant ?: return SerdeResult.success(null)
             variant = null
-            return seed.deserialize(TokenDeserializer(token)).map<K?> { it }
+            return when (token) {
+                is Token.Bytes -> seed.deserialize(BytesDeserializer(token.value)).map<K?> { it }
+                else -> seed.deserialize(TokenDeserializer(token)).map<K?> { it }
+            }
         }
 
         override fun <V> nextValueSeed(seed: DeserializeSeed<V>): SerdeResult<V> =
             when (format) {
                 EnumFormat.Seq -> {
-                    val access = DeserializerSeqAccess(deserializer, null, Token.TupleVariantEnd)
+                    val access = DeserializerSeqVisitor(deserializer, null, Token.TupleVariantEnd)
                     seed.deserialize(SeqAccessDeserializer.new(access)).flatMap { value ->
                         deserializer.assertNextToken(Token.TupleVariantEnd).map { value }
                     }
                 }
 
                 EnumFormat.Map -> {
-                    val access = DeserializerMapAccess(deserializer, null, Token.StructVariantEnd)
+                    val access = DeserializerMapVisitor(deserializer, null, Token.StructVariantEnd)
                     seed.deserialize(MapAccessDeserializer.new(access)).flatMap { value ->
                         deserializer.assertNextToken(Token.StructVariantEnd).map { value }
                     }
@@ -713,6 +716,12 @@ private class TokenDeserializer(
             is Token.U64 -> visitor.visitU64(token.value)
             else -> unexpected(token)
         }
+}
+
+private class BytesDeserializer(
+    private val value: ByteArray,
+) : DeserializeAnyForwarder() {
+    override fun <V> deserializeAny(visitor: Visitor<V>): SerdeResult<V> = visitor.visitBytes(value)
 }
 
 private fun <T> failure(message: String): SerdeResult<T> = SerdeResult.failure(SerdeError.custom(message))

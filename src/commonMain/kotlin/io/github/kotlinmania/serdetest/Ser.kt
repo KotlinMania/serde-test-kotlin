@@ -13,14 +13,12 @@ import io.github.kotlinmania.serdecore.ser.SerializeTupleStruct
 import io.github.kotlinmania.serdecore.ser.SerializeTupleVariant
 import io.github.kotlinmania.serdecore.ser.Serializer as SerdeSerializer
 
-typealias Serializer = TokenSerializer
-
 /** A serializer that ensures that a value serializes to a given list of tokens. */
-class TokenSerializer private constructor(
+class Serializer private constructor(
     tokens: List<Token>,
 ) : SerdeSerializer<Unit> {
     companion object {
-        fun new(tokens: List<Token>): TokenSerializer = TokenSerializer(tokens)
+        fun new(tokens: List<Token>): Serializer = Serializer(tokens)
     }
 
     private val tokens = tokens.toMutableList()
@@ -98,13 +96,13 @@ class TokenSerializer private constructor(
         name: String,
         variantIndex: UInt,
         variant: String,
-    ): SerdeResult<Unit> {
+    ): SerdeResult<Unit> =
         if (peekToken() == Token.Enum(name)) {
             nextToken()
-            return expect(Token.Str(variant)).flatMap { expect(Token.UnitValue) }
+            expect(Token.Str(variant)).flatMap { expect(Token.UnitValue) }
+        } else {
+            expect(Token.UnitVariant(name, variant))
         }
-        return expect(Token.UnitVariant(name, variant))
-    }
 
     override fun <T : Serialize> serializeNewtypeStruct(
         name: String,
@@ -116,16 +114,15 @@ class TokenSerializer private constructor(
         variantIndex: UInt,
         variant: String,
         value: T,
-    ): SerdeResult<Unit> {
-        val header =
+    ): SerdeResult<Unit> =
+        (
             if (peekToken() == Token.Enum(name)) {
                 nextToken()
                 expect(Token.Str(variant))
             } else {
                 expect(Token.NewtypeVariant(name, variant))
             }
-        return header.flatMap { value.serialize(this) }
-    }
+        ).flatMap { value.serialize(this) }
 
     override fun serializeNone(): SerdeResult<Unit> = expect(Token.None)
 
@@ -154,10 +151,10 @@ class TokenSerializer private constructor(
             nextToken()
             return expect(Token.Str(variant))
                 .flatMap { expect(Token.Seq(len)) }
-                .map { TupleVariantState(this, Token.SeqEnd) }
+                .map { Variant(this, Token.SeqEnd) }
         }
         return expect(Token.TupleVariant(name, variant, len))
-            .map { TupleVariantState(this, Token.TupleVariantEnd) }
+            .map { Variant(this, Token.TupleVariantEnd) }
     }
 
     override fun serializeMap(len: Int?): SerdeResult<SerializeMap<Unit>> =
@@ -179,10 +176,10 @@ class TokenSerializer private constructor(
             nextToken()
             return expect(Token.Str(variant))
                 .flatMap { expect(Token.Map(len)) }
-                .map { StructVariantState(this, Token.MapEnd) }
+                .map { Variant(this, Token.MapEnd) }
         }
         return expect(Token.StructVariant(name, variant, len))
-            .map { StructVariantState(this, Token.StructVariantEnd) }
+            .map { Variant(this, Token.StructVariantEnd) }
     }
 
     override fun isHumanReadable(): Boolean =
@@ -193,7 +190,7 @@ class TokenSerializer private constructor(
 }
 
 private class SequenceState(
-    private val serializer: TokenSerializer,
+    private val serializer: Serializer,
     private val end: Token,
 ) : SerializeSeq<Unit> {
     override fun <T : Serialize> serializeElement(value: T): SerdeResult<Unit> = value.serialize(serializer)
@@ -202,7 +199,7 @@ private class SequenceState(
 }
 
 private class TupleState(
-    private val serializer: TokenSerializer,
+    private val serializer: Serializer,
 ) : SerializeTuple<Unit> {
     override fun <T : Serialize> serializeElement(value: T): SerdeResult<Unit> = value.serialize(serializer)
 
@@ -210,24 +207,15 @@ private class TupleState(
 }
 
 private class TupleStructState(
-    private val serializer: TokenSerializer,
+    private val serializer: Serializer,
 ) : SerializeTupleStruct<Unit> {
     override fun <T : Serialize> serializeField(value: T): SerdeResult<Unit> = value.serialize(serializer)
 
     override fun end(): SerdeResult<Unit> = serializer.expect(Token.TupleStructEnd)
 }
 
-private class TupleVariantState(
-    private val serializer: TokenSerializer,
-    private val end: Token,
-) : SerializeTupleVariant<Unit> {
-    override fun <T : Serialize> serializeField(value: T): SerdeResult<Unit> = value.serialize(serializer)
-
-    override fun end(): SerdeResult<Unit> = serializer.expect(end)
-}
-
 private class MapState(
-    private val serializer: TokenSerializer,
+    private val serializer: Serializer,
 ) : SerializeMap<Unit> {
     override fun <T : Serialize> serializeKey(key: T): SerdeResult<Unit> = key.serialize(serializer)
 
@@ -237,7 +225,7 @@ private class MapState(
 }
 
 private class StructState(
-    private val serializer: TokenSerializer,
+    private val serializer: Serializer,
 ) : SerializeStruct<Unit> {
     override fun <T : Serialize> serializeField(
         key: String,
@@ -247,10 +235,13 @@ private class StructState(
     override fun end(): SerdeResult<Unit> = serializer.expect(Token.StructEnd)
 }
 
-private class StructVariantState(
-    private val serializer: TokenSerializer,
+private class Variant(
+    private val serializer: Serializer,
     private val end: Token,
-) : SerializeStructVariant<Unit> {
+) : SerializeTupleVariant<Unit>,
+    SerializeStructVariant<Unit> {
+    override fun <T : Serialize> serializeField(value: T): SerdeResult<Unit> = value.serialize(serializer)
+
     override fun <T : Serialize> serializeField(
         key: String,
         value: T,
