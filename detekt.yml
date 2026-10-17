@@ -47,6 +47,7 @@ style:
   ModifierOrder: { active: false }
   UnusedPrivateProperty: { active: false }
   RedundantVisibilityModifier: { active: false }
+  AbstractClassCanBeInterface: { active: false }
 
 complexity:
   active: true

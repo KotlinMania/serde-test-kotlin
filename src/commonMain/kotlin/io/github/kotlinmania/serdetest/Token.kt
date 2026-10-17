@@ -7,7 +7,7 @@ package io.github.kotlinmania.serdetest
  */
 sealed interface Token {
     /** Formats this token using its standard representation. */
-    fun fmt(): kotlin.String = toString()
+    fun fmt(formatter: Any? = null): String = if (formatter != null) toString() else toString()
 
     /** A serialized boolean. */
     data class Bool(

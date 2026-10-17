@@ -24,12 +24,15 @@ fun assertSerTokens(
     value: Serialize,
     tokens: List<Token>,
 ) {
-    val serializer = TokenSerializer.new(tokens)
-    when (val result = value.serialize(serializer)) {
+    val ser = Serializer.new(tokens)
+    when (val result = value.serialize(ser)) {
         is SerdeResult.Success -> Unit
         is SerdeResult.Failure -> error("value failed to serialize: ${result.error}")
     }
-    assertNoRemainingTokens(serializer.remaining())
+
+    if (ser.remaining() > 0) {
+        error("${ser.remaining()} remaining tokens")
+    }
 }
 
 /**
@@ -40,8 +43,8 @@ fun assertSerTokensError(
     tokens: List<Token>,
     error: String,
 ) {
-    val serializer = TokenSerializer.new(tokens)
-    when (val result = value.serialize(serializer)) {
+    val ser = Serializer.new(tokens)
+    when (val result = value.serialize(ser)) {
         is SerdeResult.Success -> {
             error("value serialized successfully")
         }
@@ -52,7 +55,10 @@ fun assertSerTokensError(
             }
         }
     }
-    assertNoRemainingTokens(serializer.remaining())
+
+    if (ser.remaining() > 0) {
+        error("${ser.remaining()} remaining tokens")
+    }
 }
 
 /**
@@ -63,31 +69,44 @@ fun <T> assertDeTokens(
     deserialize: Deserialize<T>,
     tokens: List<Token>,
 ) {
-    val deserializer = Deserializer(tokens)
-    var deserializedValue =
-        when (val result = deserialize.deserialize(deserializer)) {
-            is SerdeResult.Success -> result.value
-            is SerdeResult.Failure -> error("tokens failed to deserialize: ${result.error}")
-        }
-    if (deserializedValue != value) {
-        error("deserialized value <$deserializedValue> did not equal expected value <$value>")
-    }
-    assertNoRemainingTokens(deserializer.remaining())
+    val de = Deserializer(tokens)
+    var deserializedVal =
+        when (val result = deserialize.deserialize(de)) {
+            is SerdeResult.Success -> {
+                if (result.value != value) {
+                    error("deserialized value <${result.value}> did not equal expected value <$value>")
+                }
+                result.value
+            }
 
-    val inPlaceDeserializer = Deserializer(tokens)
+            is SerdeResult.Failure -> {
+                error("tokens failed to deserialize: ${result.error}")
+            }
+        }
+    if (de.remaining() > 0) {
+        error("${de.remaining()} remaining tokens")
+    }
+
+    val deInPlace = Deserializer(tokens)
     when (
         val result =
-            deserialize.deserializeInPlace(inPlaceDeserializer) {
-                deserializedValue = it
+            deserialize.deserializeInPlace(deInPlace) {
+                deserializedVal = it
             }
     ) {
-        is SerdeResult.Success -> Unit
-        is SerdeResult.Failure -> error("tokens failed to deserialize in place: ${result.error}")
+        is SerdeResult.Success -> {
+            if (deserializedVal != value) {
+                error("in-place deserialized value <$deserializedVal> did not equal expected value <$value>")
+            }
+        }
+
+        is SerdeResult.Failure -> {
+            error("tokens failed to deserialize in place: ${result.error}")
+        }
     }
-    if (deserializedValue != value) {
-        error("in-place deserialized value <$deserializedValue> did not equal expected value <$value>")
+    if (deInPlace.remaining() > 0) {
+        error("${deInPlace.remaining()} remaining tokens")
     }
-    assertNoRemainingTokens(inPlaceDeserializer.remaining())
 }
 
 /**
@@ -98,8 +117,8 @@ fun <T> assertDeTokensError(
     tokens: List<Token>,
     error: String,
 ) {
-    val deserializer = Deserializer(tokens)
-    when (val result = deserialize.deserialize(deserializer)) {
+    val de = Deserializer(tokens)
+    when (val result = deserialize.deserialize(de)) {
         is SerdeResult.Success -> {
             error("tokens deserialized successfully")
         }
@@ -111,10 +130,9 @@ fun <T> assertDeTokensError(
         }
     }
 
-    deserializer.nextTokenOpt()
-    assertNoRemainingTokens(deserializer.remaining())
-}
+    de.nextTokenOpt()
 
-private fun assertNoRemainingTokens(remaining: Int) {
-    if (remaining > 0) error("$remaining remaining tokens")
+    if (de.remaining() > 0) {
+        error("${de.remaining()} remaining tokens")
+    }
 }

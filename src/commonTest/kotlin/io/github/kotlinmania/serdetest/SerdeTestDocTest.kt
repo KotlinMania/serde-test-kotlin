@@ -1,4 +1,3 @@
-// port-lint: tests lib.rs
 package io.github.kotlinmania.serdetest
 
 import io.github.kotlinmania.serde.SerdeResult
@@ -12,7 +11,7 @@ import io.github.kotlinmania.serdecore.ser.Serialize
 import io.github.kotlinmania.serdecore.ser.Serializer
 import kotlin.test.Test
 
-class LibTest {
+class SerdeTestDocTest {
     @Test
     fun testSerDeEmpty() {
         val map = LinkedMap(emptyList())
