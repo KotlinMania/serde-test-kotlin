@@ -8,6 +8,7 @@ import io.github.kotlinmania.serdecore.de.EnumAccess
 import io.github.kotlinmania.serdecore.de.MapAccess
 import io.github.kotlinmania.serdecore.de.SeqAccess
 import io.github.kotlinmania.serdecore.de.SeqElement
+import io.github.kotlinmania.serdecore.de.UnitDeserialize
 import io.github.kotlinmania.serdecore.de.VariantAccess
 import io.github.kotlinmania.serdecore.de.Visitor
 import io.github.kotlinmania.serdecore.de.value.MapAccessDeserializer
@@ -519,16 +520,12 @@ internal class Deserializer(
 
         override fun unitVariant(): SerdeResult<Unit> =
             when (deserializer.peekTokenOpt()) {
-                is Token.UnitVariant,
-                Token.UnitValue,
-                -> {
+                is Token.UnitVariant -> {
                     deserializer.nextTokenOpt()
                     SerdeResult.success(Unit)
                 }
 
-                else -> {
-                    deserializer.nextToken().flatMap(::unexpected)
-                }
+                else -> UnitDeserialize.deserialize(deserializer)
             }
 
         override fun <T> newtypeVariantSeed(seed: DeserializeSeed<T>): SerdeResult<T> {
