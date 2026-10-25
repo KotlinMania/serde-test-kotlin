@@ -55,7 +55,7 @@ class AssertTest {
         assertDeTokensError(
             BooleanDeserialize,
             listOf(Token.I32(100)),
-            "invalid type: Signed(value=100), expected a boolean",
+            "invalid type: integer `100`, expected a boolean",
         )
     }
 

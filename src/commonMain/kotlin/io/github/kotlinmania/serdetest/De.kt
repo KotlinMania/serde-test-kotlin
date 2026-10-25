@@ -7,6 +7,7 @@ import io.github.kotlinmania.serdecore.de.DeserializeSeed
 import io.github.kotlinmania.serdecore.de.EnumAccess
 import io.github.kotlinmania.serdecore.de.MapAccess
 import io.github.kotlinmania.serdecore.de.SeqAccess
+import io.github.kotlinmania.serdecore.de.SeqElement
 import io.github.kotlinmania.serdecore.de.VariantAccess
 import io.github.kotlinmania.serdecore.de.Visitor
 import io.github.kotlinmania.serdecore.de.value.MapAccessDeserializer
@@ -474,10 +475,10 @@ internal class Deserializer(
         private var len: Int?,
         private val end: Token,
     ) : SeqAccess {
-        override fun <T> nextElementSeed(seed: DeserializeSeed<T>): SerdeResult<T?> {
-            if (deserializer.peekTokenOpt() == end) return SerdeResult.success(null)
+        override fun <T> nextElementSeed(seed: DeserializeSeed<T>): SerdeResult<SeqElement<T>> {
+            if (deserializer.peekTokenOpt() == end) return SerdeResult.success(SeqElement.None)
             len = len?.let { (it - 1).coerceAtLeast(0) }
-            return seed.deserialize(deserializer).map<T?> { it }
+            return seed.deserialize(deserializer).map { SeqElement.Some(it) }
         }
 
         override fun sizeHint(): Int? = len

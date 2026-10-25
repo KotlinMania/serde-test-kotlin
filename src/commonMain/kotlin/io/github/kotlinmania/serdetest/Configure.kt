@@ -8,6 +8,7 @@ import io.github.kotlinmania.serdecore.de.Deserializer
 import io.github.kotlinmania.serdecore.de.EnumAccess
 import io.github.kotlinmania.serdecore.de.MapAccess
 import io.github.kotlinmania.serdecore.de.SeqAccess
+import io.github.kotlinmania.serdecore.de.SeqElement
 import io.github.kotlinmania.serdecore.de.VariantAccess
 import io.github.kotlinmania.serdecore.de.Visitor
 import io.github.kotlinmania.serdecore.ser.Serialize
@@ -417,7 +418,7 @@ private class ConfiguredSeqAccess(
     private val delegate: SeqAccess,
     private val humanReadable: Boolean,
 ) : SeqAccess {
-    override fun <T> nextElementSeed(seed: DeserializeSeed<T>): SerdeResult<T?> =
+    override fun <T> nextElementSeed(seed: DeserializeSeed<T>): SerdeResult<SeqElement<T>> =
         delegate.nextElementSeed(ConfiguredSeed(seed, humanReadable))
 
     override fun sizeHint(): Int? = delegate.sizeHint()
