@@ -5,13 +5,15 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 6/7 (85.7%)
-- **Function parity:** 80/80 matched (target 300) — 100.0%
+- **Function parity:** 96/100 matched (target 300) — 96.0%
 - **Class/type parity:** 14/26 matched (target 81) — 53.8%
-- **Combined symbol parity:** 94/106 matched (target 381) — 88.7%
-- **Average inline-code cosine:** 0.68 (function body across 6 matched files)
+- **Combined symbol parity:** 110/126 matched (target 381) — 87.3%
+- **Average inline-code cosine:** 0.20 (function body across 6 matched files)
 - **Average documentation cosine:** 0.28 (doc text across 6 matched files)
 - **Cheat-zeroed Files:** 0
-- **Critical Issues:** 1 files with <0.60 function similarity
+- **Critical Issues:** 6 files with <0.60 function similarity
+- **Needs Review:** 0 files with 0.60-0.84 function similarity
+- **Excellent:** 0 files with >=0.85 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
@@ -30,9 +32,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 1. token
 
 - **Target:** `serdetest.Token`
-- **Similarity:** 0.52
+- **Similarity:** 0.07
 - **Dependents:** 4
-- **Priority Score:** 4000204.8
+- **Priority Score:** 4000209.2
 - **Functions:** 1/1 matched (target 10)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched (target 41)
@@ -41,10 +43,10 @@ Every matched file is listed below with function and type symbol parity.
 ### 2. error
 
 - **Target:** `serdetest.Error`
-- **Similarity:** 0.85
+- **Similarity:** 0.23
 - **Dependents:** 2
-- **Priority Score:** 2000501.5
-- **Functions:** 4/4 matched (target 6)
+- **Priority Score:** 2000607.8
+- **Functions:** 5/5 matched (target 6)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -52,42 +54,42 @@ Every matched file is listed below with function and type symbol parity.
 ### 3. ser
 
 - **Target:** `serdetest.Ser`
-- **Similarity:** 0.61
+- **Similarity:** 0.17
 - **Dependents:** 0
-- **Priority Score:** 94803.9
-- **Functions:** 37/37 matched (target 48)
-- **Missing functions:** _none_
+- **Priority Score:** 105808.3
+- **Functions:** 46/47 matched (target 48)
+- **Missing functions:** `end`
 - **Types:** 2/11 matched (target 7)
 - **Missing types:** `Ok`, `Error`, `SerializeSeq`, `SerializeTuple`, `SerializeTupleStruct`, `SerializeTupleVariant`, `SerializeMap`, `SerializeStruct`, `SerializeStructVariant`
 
 ### 4. de
 
 - **Target:** `serdetest.De`
-- **Similarity:** 0.70
+- **Similarity:** 0.18
 - **Dependents:** 0
-- **Priority Score:** 23803.0
-- **Functions:** 29/29 matched (target 90)
-- **Missing functions:** _none_
+- **Priority Score:** 34308.2
+- **Functions:** 33/34 matched (target 90)
+- **Missing functions:** `new`
 - **Types:** 7/9 matched
 - **Missing types:** `Error`, `Variant`
 
 ### 5. configure
 
 - **Target:** `serdetest.Configure`
-- **Similarity:** 0.63
+- **Similarity:** 0.21
 - **Dependents:** 0
-- **Priority Score:** 10803.7
-- **Functions:** 4/4 matched (target 132)
-- **Missing functions:** _none_
+- **Priority Score:** 31207.9
+- **Functions:** 6/8 matched (target 132)
+- **Missing functions:** `deserialize`, `deserialize`
 - **Types:** 3/4 matched (target 20)
 - **Missing types:** `Value`
 
 ### 6. assert
 
 - **Target:** `serdetest.Assert`
-- **Similarity:** 0.75
+- **Similarity:** 0.32
 - **Dependents:** 0
-- **Priority Score:** 502.5
+- **Priority Score:** 506.8
 - **Functions:** 5/5 matched (target 14)
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 3)
