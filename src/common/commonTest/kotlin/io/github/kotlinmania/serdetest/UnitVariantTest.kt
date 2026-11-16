@@ -12,15 +12,22 @@ import kotlin.test.Test
 class UnitVariantTest {
     private object UnitEnum : Deserialize<String> {
         override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
-            deserializer.deserializeEnum("E", listOf("A"), object : Visitor<String> {
-                override fun expecting(): String = "enum E"
+            deserializer.deserializeEnum(
+                "E",
+                listOf("A"),
+                object : Visitor<String> {
+                    override fun expecting(): String = "enum E"
 
-                override fun <A : EnumAccess> visitEnum(access: A): SerdeResult<String> =
-                    access.variantSeed(object : DeserializeSeed<String> {
-                        override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
-                            StringDeserialize.deserialize(deserializer)
-                    }).flatMap { (name, payload) -> payload.unitVariant().map { name } }
-            })
+                    override fun <A : EnumAccess> visitEnum(access: A): SerdeResult<String> =
+                        access
+                            .variantSeed(
+                                object : DeserializeSeed<String> {
+                                    override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
+                                        StringDeserialize.deserialize(deserializer)
+                                },
+                            ).flatMap { (name, payload) -> payload.unitVariant().map { name } }
+                },
+            )
     }
 
     @Test
