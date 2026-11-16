@@ -10,6 +10,11 @@ import io.github.kotlinmania.serdecore.de.Visitor
 import kotlin.test.Test
 
 class UnitVariantTest {
+    private object VariantNameSeed : DeserializeSeed<String> {
+        override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
+            StringDeserialize.deserialize(deserializer)
+    }
+
     private object UnitEnum : Deserialize<String> {
         override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
             deserializer.deserializeEnum(
@@ -20,12 +25,8 @@ class UnitVariantTest {
 
                     override fun <A : EnumAccess> visitEnum(access: A): SerdeResult<String> =
                         access
-                            .variantSeed(
-                                object : DeserializeSeed<String> {
-                                    override fun <D : Deserializer> deserialize(deserializer: D): SerdeResult<String> =
-                                        StringDeserialize.deserialize(deserializer)
-                                },
-                            ).flatMap { (name, payload) -> payload.unitVariant().map { name } }
+                            .variantSeed(VariantNameSeed)
+                            .flatMap { (name, payload) -> payload.unitVariant().map { name } }
                 },
             )
     }
