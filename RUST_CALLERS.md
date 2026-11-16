@@ -16,19 +16,20 @@ For every Rust crate this repo owns (under `tmp/`), this file lists every **cros
 
 | package | module | inbound use sites | distinct caller crates | distinct caller repos | codex sites |
 |---|---|---:|---:|---:|---:|
-| `serde_test` | `serde_test` | 116 | 8 | 8 | 0 |
+| `serde_test` | `serde_test` | 167 | 10 | 10 | 0 |
 
 ## `serde_test`
 
-### Inbound symbols (10 distinct, 116 total `use` sites)
+### Inbound symbols (10 distinct, 167 total `use` sites)
 
 Sorted by codex demand, then total demand. The first symbols are the priority queue for porting `serde_test`.
 
-#### `serde_test::Token` — 32 site(s) (0 codex, 32 other, 7 caller crates)
+#### `serde_test::Token` — 48 site(s) (0 codex, 48 other, 9 caller crates)
 
 - `arc-swap-kotlin/arc-swap` `src/serde.rs:28` — `use serde_test::Token`
 - `bytes-kotlin/bytes` `tests/test_serde.rs:3` — `use serde_test::Token`
 - `log-kotlin/log` `src/serde.rs:208` — `use serde_test::Token`
+- `num-bigint-kotlin/big_serde` `src/lib.rs:16` — `use serde_test::Token`
 - `serde-kotlin/serde_test_suite` `tests/macros/mod.rs:2` — `use serde_test::Token`
 - `serde-kotlin/serde_test_suite` `tests/regression/issue2565.rs:2` — `use serde_test::Token`
 - `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::Token`
@@ -37,15 +38,15 @@ Sorted by codex demand, then total demand. The first symbols are the priority qu
 - `serde-kotlin/serde_test_suite` `tests/test_de_error.rs:10` — `use serde_test::Token`
 - `serde-kotlin/serde_test_suite` `tests/test_enum_adjacently_tagged.rs:10` — `use serde_test::Token`
 - `serde-kotlin/serde_test_suite` `tests/test_enum_internally_tagged.rs:12` — `use serde_test::Token`
-- `serde-kotlin/serde_test_suite` `tests/test_enum_untagged.rs:12` — `use serde_test::Token`
-- _… and 20 more site(s)._
+- _… and 36 more site(s)._
 
-#### `serde_test::assert_tokens` — 20 site(s) (0 codex, 20 other, 7 caller crates)
+#### `serde_test::assert_tokens` — 29 site(s) (0 codex, 29 other, 9 caller crates)
 
 - `arc-swap-kotlin/arc-swap` `src/serde.rs:28` — `use serde_test::assert_tokens`
 - `bitflags-kotlin/bitflags` `src/external/serde.rs:63` — `use serde_test::assert_tokens`
 - `bytes-kotlin/bytes` `tests/test_serde.rs:3` — `use serde_test::assert_tokens`
 - `log-kotlin/log` `src/serde.rs:208` — `use serde_test::assert_tokens`
+- `num-bigint-kotlin/big_serde` `src/lib.rs:16` — `use serde_test::assert_tokens`
 - `serde-kotlin/serde_test_suite` `tests/regression/issue2565.rs:2` — `use serde_test::assert_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_enum_adjacently_tagged.rs:10` — `use serde_test::assert_tokens`
@@ -53,44 +54,12 @@ Sorted by codex demand, then total demand. The first symbols are the priority qu
 - `serde-kotlin/serde_test_suite` `tests/test_enum_untagged.rs:12` — `use serde_test::assert_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_macros.rs:10` — `use serde_test::assert_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_roundtrip.rs:1` — `use serde_test::assert_tokens`
-- `serde-kotlin/serde_test_suite` `tests/unstable/mod.rs:2` — `use serde_test::assert_tokens`
-- _… and 8 more site(s)._
+- _… and 17 more site(s)._
 
-#### `serde_test::Configure` — 15 site(s) (0 codex, 15 other, 5 caller crates)
-
-- `bitflags-kotlin/bitflags` `src/external/serde.rs:63` — `use serde_test::Configure`
-- `serde-kotlin/serde_test_suite` `tests/test_de.rs:16` — `use serde_test::Configure`
-- `serde-kotlin/serde_test_suite` `tests/test_roundtrip.rs:1` — `use serde_test::Configure`
-- `serde-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::Configure`
-- `serde-with-kotlin/serde_with` `tests/serde_as/enum_map.rs:3` — `use serde_test::Configure`
-- `serde-with-kotlin/serde_with` `tests/serde_as/key_value_map.rs:3` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/iso8601.rs:2` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/json.rs:4` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/macros.rs:3` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/mod.rs:1` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/rfc2822.rs:2` — `use serde_test::Configure`
-- `time-kotlin/time` `tests/integration/serde/rfc3339.rs:2` — `use serde_test::Configure`
-- _… and 3 more site(s)._
-
-#### `serde_test::assert_de_tokens_error` — 14 site(s) (0 codex, 14 other, 3 caller crates)
-
-- `log-kotlin/log` `src/serde.rs:208` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_borrow.rs:13` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_de_error.rs:10` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_enum_adjacently_tagged.rs:10` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_enum_internally_tagged.rs:12` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_enum_untagged.rs:12` — `use serde_test::assert_de_tokens_error`
-- `serde-kotlin/serde_test_suite` `tests/test_identifier.rs:6` — `use serde_test::assert_de_tokens_error`
-- `time-kotlin/time` `tests/integration/serde/iso8601.rs:2` — `use serde_test::assert_de_tokens_error`
-- `time-kotlin/time` `tests/integration/serde/macros.rs:3` — `use serde_test::assert_de_tokens_error`
-- `time-kotlin/time` `tests/integration/serde/mod.rs:1` — `use serde_test::assert_de_tokens_error`
-- `time-kotlin/time` `tests/integration/serde/rfc3339.rs:2` — `use serde_test::assert_de_tokens_error`
-- _… and 2 more site(s)._
-
-#### `serde_test::assert_de_tokens` — 13 site(s) (0 codex, 13 other, 4 caller crates)
+#### `serde_test::assert_de_tokens` — 23 site(s) (0 codex, 23 other, 6 caller crates)
 
 - `log-kotlin/log` `src/serde.rs:208` — `use serde_test::assert_de_tokens`
+- `num-bigint-kotlin/big_serde` `src/lib.rs:16` — `use serde_test::assert_de_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_de_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_borrow.rs:13` — `use serde_test::assert_de_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_de.rs:16` — `use serde_test::assert_de_tokens`
@@ -101,18 +70,62 @@ Sorted by codex demand, then total demand. The first symbols are the priority qu
 - `serde-kotlin/serde_test_suite` `tests/test_macros.rs:10` — `use serde_test::assert_de_tokens`
 - `serde-kotlin/serde_test_suite` `tests/test_value.rs:6` — `use serde_test::assert_de_tokens`
 - `serde-with-kotlin/serde_with` `tests/serde_as/lib.rs:1054` — `use serde_test::assert_de_tokens`
-- `time-kotlin/time` `tests/integration/serde/macros.rs:3` — `use serde_test::assert_de_tokens`
-- _… and 1 more site(s)._
+- _… and 11 more site(s)._
 
-#### `serde_test::assert_ser_tokens_error` — 7 site(s) (0 codex, 7 other, 2 caller crates)
+#### `serde_test::assert_de_tokens_error` — 21 site(s) (0 codex, 21 other, 4 caller crates)
+
+- `log-kotlin/log` `src/serde.rs:208` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_borrow.rs:13` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_de_error.rs:10` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_enum_adjacently_tagged.rs:10` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_enum_internally_tagged.rs:12` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_enum_untagged.rs:12` — `use serde_test::assert_de_tokens_error`
+- `serde-kotlin/serde_test_suite` `tests/test_identifier.rs:6` — `use serde_test::assert_de_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_de_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_borrow.rs:13` — `use serde_test::assert_de_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_de_error.rs:10` — `use serde_test::assert_de_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_enum_adjacently_tagged.rs:10` — `use serde_test::assert_de_tokens_error`
+- _… and 9 more site(s)._
+
+#### `serde_test::Configure` — 18 site(s) (0 codex, 18 other, 6 caller crates)
+
+- `bitflags-kotlin/bitflags` `src/external/serde.rs:63` — `use serde_test::Configure`
+- `serde-kotlin/serde_test_suite` `tests/test_de.rs:16` — `use serde_test::Configure`
+- `serde-kotlin/serde_test_suite` `tests/test_roundtrip.rs:1` — `use serde_test::Configure`
+- `serde-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::Configure`
+- `serde-with-kotlin/serde_with` `tests/serde_as/enum_map.rs:3` — `use serde_test::Configure`
+- `serde-with-kotlin/serde_with` `tests/serde_as/key_value_map.rs:3` — `use serde_test::Configure`
+- `serderive-kotlin/serde_test_suite` `tests/test_de.rs:16` — `use serde_test::Configure`
+- `serderive-kotlin/serde_test_suite` `tests/test_roundtrip.rs:1` — `use serde_test::Configure`
+- `serderive-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::Configure`
+- `time-kotlin/time` `tests/integration/serde/iso8601.rs:2` — `use serde_test::Configure`
+- `time-kotlin/time` `tests/integration/serde/json.rs:4` — `use serde_test::Configure`
+- `time-kotlin/time` `tests/integration/serde/macros.rs:3` — `use serde_test::Configure`
+- _… and 6 more site(s)._
+
+#### `serde_test::assert_ser_tokens_error` — 9 site(s) (0 codex, 9 other, 3 caller crates)
 
 - `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_ser_tokens_error`
 - `serde-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::assert_ser_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_ser_tokens_error`
+- `serderive-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::assert_ser_tokens_error`
 - `time-kotlin/time` `tests/integration/serde/error_conditions.rs:2` — `use serde_test::assert_ser_tokens_error`
 - `time-kotlin/time` `tests/integration/serde/iso8601.rs:2` — `use serde_test::assert_ser_tokens_error`
 - `time-kotlin/time` `tests/integration/serde/macros.rs:3` — `use serde_test::assert_ser_tokens_error`
 - `time-kotlin/time` `tests/integration/serde/rfc3339.rs:2` — `use serde_test::assert_ser_tokens_error`
 - `time-kotlin/time` `tests/integration/serde_helpers.rs:2` — `use serde_test::assert_ser_tokens_error`
+
+#### `serde_test::assert_ser_tokens` — 8 site(s) (0 codex, 8 other, 4 caller crates)
+
+- `num-bigint-kotlin/big_serde` `src/lib.rs:16` — `use serde_test::assert_ser_tokens`
+- `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_ser_tokens`
+- `serde-kotlin/serde_test_suite` `tests/test_macros.rs:10` — `use serde_test::assert_ser_tokens`
+- `serde-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::assert_ser_tokens`
+- `serde-with-kotlin/serde_with` `tests/serde_as/lib.rs:1334` — `use serde_test::assert_ser_tokens`
+- `serderive-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_ser_tokens`
+- `serderive-kotlin/serde_test_suite` `tests/test_macros.rs:10` — `use serde_test::assert_ser_tokens`
+- `serderive-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::assert_ser_tokens`
 
 #### `serde_test::Readable` — 5 site(s) (0 codex, 5 other, 2 caller crates)
 
@@ -128,13 +141,6 @@ Sorted by codex demand, then total demand. The first symbols are the priority qu
 - `serde-with-kotlin/serde_with` `tests/serde_as/enum_map.rs:250` — `use serde_test::Token::*`
 - `serde-with-kotlin/serde_with` `tests/serde_as/enum_map.rs:308` — `use serde_test::Token::*`
 - `serde-with-kotlin/serde_with` `tests/serde_as/key_value_map.rs:206` — `use serde_test::Token::*`
-
-#### `serde_test::assert_ser_tokens` — 4 site(s) (0 codex, 4 other, 2 caller crates)
-
-- `serde-kotlin/serde_test_suite` `tests/test_annotations.rs:16` — `use serde_test::assert_ser_tokens`
-- `serde-kotlin/serde_test_suite` `tests/test_macros.rs:10` — `use serde_test::assert_ser_tokens`
-- `serde-kotlin/serde_test_suite` `tests/test_ser.rs:5` — `use serde_test::assert_ser_tokens`
-- `serde-with-kotlin/serde_with` `tests/serde_as/lib.rs:1334` — `use serde_test::assert_ser_tokens`
 
 #### `serde_test::Compact` — 2 site(s) (0 codex, 2 other, 2 caller crates)
 
